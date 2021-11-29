@@ -43,9 +43,9 @@ Both of these elements (tags and plans) become Custom Resources that are used to
 ### Tag
 
 Representation of a release inside an Openshift cluster.
-When a new Tag comes in, it's put in an upgrade graph and matched against Plans. If no Plan for the Tag exists,
-the Tag is left as it is. If a Plan exists, the Tag is considered for syncing based on it's priority in the upgrade graph.
-The upgrade graph follows the principles of semantic versioning. Older Tags have higher priority.
+When a new Tag comes in, it's put in an re-sync graph and matched against Plans. If no Plan for the Tag exists,
+the Tag is left as it is. If a Plan exists, the Tag is considered for syncing based on it's priority in the re-sync graph.
+The re-sync graph follows the principles of semantic versioning. Older Tags have higher priority.
 
 Example:
 ```
@@ -81,28 +81,28 @@ metadata:
   name: z-release-4.8
 spec: 
   config:
-  upstream:
-    name: github.com/kubernetes/kubernetes
-    matchedVersions:
-    - 1.21.x
-  downstream:
-    name: github.com/openshift/kubernetes
-    branch: release-4.8
-  enablePrereleases: false
-  image: registry.ci.openshift.org/openshift/release:rhel-8-release-golang-1.16-openshift-4.8
-  env:
-  - name: UPSTREAM_REF
-    from: .config.upstream.name
-  - name: DOWNSTREAM_REF
-    from: .config.downstream.name
-  - name: CHANGELOG_LINK
-    value: https://github.com/kubernetes/kubernetes/blob/ster/CHANGELOG/CHANGELOG-1.21.md#1212
-  slack:
-    credentials:
-    secretSelector: slack-secret
-  github:
-    credentials:
-    secretSelector: github-secret
+    upstream:
+      name: github.com/kubernetes/kubernetes
+      matchedVersions:
+      - 1.21.x
+    downstream:
+      name: github.com/openshift/kubernetes
+      branch: release-4.8
+    enablePrereleases: false
+    image: registry.ci.openshift.org/openshift/release:rhel-8-release-golang-1.16-openshift-4.8
+    env:
+    - name: UPSTREAM_REF
+      from: .config.upstream.name
+    - name: DOWNSTREAM_REF
+      from: .config.downstream.name
+    - name: CHANGELOG_LINK
+      value: https://github.com/kubernetes/kubernetes/blob/ster/CHANGELOG/CHANGELOG-1.21.md#1212
+    slack:
+      credentials:
+      secretSelector: slack-secret
+    github:
+      credentials:
+      secretSelector: github-secret
   steps:
   - name: Git merge
     run: git merge $UPSTREAM_REF
